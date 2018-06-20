@@ -58,7 +58,7 @@ abin = 1. # in AU
 #Omega = 0 # fixed longitude of ascending node
 
 # instead of a grid, just draw uniformly from 100 e's, 100 mu's, and resulting range of 1000 ac's, +/- 10%
-draws = 900
+draws = 1000
 mu = 0.1
 elist = np.random.uniform(0.,0.99,draws)
 aclist = []
@@ -67,7 +67,6 @@ for i in elist: # for every e
     #mulist.append(temp_mu)
     ac_draw = np.random.uniform((2./3)*acrit(i,mu),(4./3)*acrit(i,mu)) # use that pair of draws to get a
     aclist.append(ac_draw)
-
 features = np.vstack((elist,aclist)).T # ten of each (e,mu), paired with 10 ac's per pt
 
 output = []
@@ -142,7 +141,7 @@ for point in features:
         if unstable_flag == 0: # if we survive every round of if-checks
             fraction_stable = fraction_stable + 1 # then we're stable
         
-    output.append(fraction_stable/10.)
+    output.append(fraction_stable/float(number_of_angles))
         
 # convert output from list to array
 output = np.asarray(output) 

@@ -9,9 +9,17 @@ In the near future, we'll also provide the scripts and a tutorial for training y
 # Tutorial (working, slowly)
 
 ## Generating training data
-With observational data from only a handful of circumbinary planets, we elected instead to generate the training data using the numerical integrator REBOUND. We begin by dropping the mu dimension, holding it constant at 0.1 while still varying semi-major axis, eccentricity, and initial phase.  
+With observational data from only a handful of circumbinary planets, we elected instead to generate the training data using the numerical integrator REBOUND. We begin by dropping the mu dimension, holding it constant at 0.1 while still varying semi-major axis, eccentricity, and initial phase. We build the training set with the following script in /mu_10/.  
 
 ```
 python staircase_10.py
+```
+
+In this script, we first set the hyperparameters of our simulation: here we use 10 phases per orientation and 1000 draws from [] space.
+
+We then build and train a neural network on the data with the following script. 
+
+```
+python model_10.py
 ```
  
