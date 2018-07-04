@@ -28,7 +28,12 @@ You can replicate this exercise for different slices in mass ratio space to see 
 We then build and train a neural network on the data with the following script. 
 
 ```
-python model_10.py
+python make_model_10.py
 ```
 
-In this script, we read in the seeding information (e and a expressed as a ratio of planet semi-major axis and binary semi-major axis, which, in another assumption within our simplified model, is 1.0) and fraction of samples per seeding found to be stable. We take the floor of this value to be our stability label. So far, all we've done was build towards a fancier model of what Holman and Wiegert did almost twenty years ago. Now we introduce another feature: how far away a planet is from a mean motion resonance. To do this we convert the semi-major axis ratio to a period ratio (ζ) using the Newtonian version of Kepler's third law, then use it to inform what we call the "resonance proxy". There is more than one way to do this, but here we simply take half of the difference between ζ and the floor of ζ, representing how far a planet is from the next largest integer. To see how far away a planet is from the next closest intege ζ, one could also take 0.5 - |ζ - |ζ| - 0.5|. We call the "resonance proxy" ε. 
+In this script, we read in the seeding information (e and a expressed as a ratio of planet semi-major axis and binary semi-major axis, which, in another assumption within our simplified model, is 1.0) and fraction of samples per seeding found to be stable. We take the floor of this value to be our stability label. So far, all we've done was build towards a fancier model of what Holman and Wiegert did almost twenty years ago. 
+
+Now we introduce another feature: how far away a planet is from a mean motion resonance. To do this we normalize the semi-major axis ratio against the semi-major axis predicted by the Holman-Wiegert formula given (µ=0.1, e), convert this re-parameterized semi-major axis ratio to a period ratio (ζ) using the Newtonian version of Kepler's third law, then use it to inform what we call the "resonance proxy". 
+
+There is more than one way to do this, but here we simply take 0.5 * (ζ - ⌊ζ⌋), where ⌊ζ⌋ is the floor of ζ, representing how far a planet is from the next largest integer. To see how far away a planet is from the next closest intege ζ, one could also take 0.5 - |ζ - ⌊ζ⌋ - 0.5|. We call the "resonance proxy" ε. 
+
