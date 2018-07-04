@@ -15,7 +15,7 @@ With observational data from only a handful of circumbinary planets, we elected 
 python staircase_10.py
 ```
 
-In this script, we first set the hyperparameters of our simulation: here we use 10 phases per orientation and 1000 draws from [e,a] space, where e is drawn (naively) uniformly from [0,0.99] and a is drawn uniformly from a +/- 33% envelope surrounding the output of the function a~crit~(mu,e), described in Holman & Weigert (1999) as a sum of terms of products of \mu and e up to the second power. 
+In this script, we first set the hyperparameters of our simulation: here we use 10 phases per orientation and 1000 draws from [e,a] space, where e is drawn (naively) uniformly from [0,0.99] and a is drawn uniformly from a +/- 33% envelope surrounding the output of the function a~crit~(mu,e), described in Holman & Weigert (1999) as a sum of terms of products of $\mu$ and e up to the second power. 
 
 
 ## Building and training dim-1 DNN
