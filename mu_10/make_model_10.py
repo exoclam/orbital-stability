@@ -15,13 +15,14 @@ import time
 batch_size = 128
 epochs = 100
 
-# calculate a_crit using equation for Holman line                                                                                    
-# source: Holman & Wiegert, 1998, https://arxiv.org/pdf/astro-ph/9809315.pdf                                                         
+# calculate a_crit using equation for Holman line                                                                                   # source: Holman & Wiegert, 1998, https://arxiv.org/pdf/astro-ph/9809315.pdf                                                         
 def acrit(ebin,mu_bin):
     ac = 1.60+5.10*ebin+(-2.22)*ebin**2+4.12*mu_bin+(-4.27)*ebin*mu_bin+(-5.09)*mu_bin**2 + 4.61*(ebin**2)*(mu_bin**2)
     return ac
+
 def massB(mu,mA):
     return mu*mA/(1-mu)
+
 #def period_ratio(mA,mB,ab,abin):
 #    return np.sqrt((4 * (ab/abin)**3 * np.pi**2)/(G*(mA+mB)))
 
@@ -31,13 +32,16 @@ def period_ratio(ab,abin):
 mA = 1
 G = 39.4769264214
 abin = 1
+mu = 0.1
 
-columns = ['ebin','mubin','ap','out','binary out', 'acrits','(ap/abin)/ahw99 - 1']
-big_job = np.vstack([np.array(map(float, line.split())) for line in open('big_job_narrow.txt')])
+columns = ['ebin', 'ap', 'out']
+big_job = np.vstack([np.array(map(float, line.split())) for line in open('big_mu_10.txt')])
 big_batch = pd.DataFrame(big_job,columns=columns)
-period_ratios = period_ratio(big_batch['ap'],abin)
-big_batch['zeta'] = period_ratios
-big_batch['epsilon'] = np.asarray(0.5*(period_ratios-np.floor(period_ratios)))
+big_batch['mubin'] = mu
+big_batch['(ap/abin)/ahw99 - 1'] = big_batch['ap']/acrit(big_batch['ebin'],big_batch['mubin']) - 1.  
+big_batch['zeta'] = period_ratio(big_batch['ap'],abin)
+big_batch['epsilon'] = np.asarray(0.5*(big_batch['zeta'] - np.floor(big_batch['zeta'])))
+big_batch['binary out'] = np.floor(big_batch['out'])
 
 X = np.asarray(big_batch[['mubin','(ap/abin)/ahw99 - 1','ebin','epsilon']])
 y = np.asarray(big_batch[['binary out']]) # choose not the direct output but the binary version of it                                
@@ -58,26 +62,6 @@ model.add(Dense(24, activation='relu'))
 model.add(Dropout(0.2))
 model.add(Dense(24, activation='relu'))
 model.add(Dropout(0.2))
-#model.add(Dense(48, activation='relu'))
-#model.add(Dropout(0.5))
-#model.add(Dense(48, activation='relu'))
-#model.add(Dropout(0.5))
-#model.add(Dense(16, activation='relu'))
-#model.add(Dropout(0.5))
-#model.add(Dense(16, activation='relu'))
-#model.add(Dropout(0.5))
-#model.add(Dense(48, activation='relu'))
-#model.add(Dropout(0.5))
-#model.add(Dense(48, activation='relu'))
-#model.add(Dropout(0.5))
-#model.add(Dense(48, activation='relu'))
-#model.add(Dropout(0.3))
-#model.add(Dense(48, activation='relu'))
-#model.add(Dropout(0.3))
-#model.add(Dense(48, activation='relu'))
-#model.add(Dropout(0.3))
-#model.add(Dense(48, activation='relu'))
-#model.add(Dropout(0.3))
 model.add(Dense(1, activation='sigmoid')) # sigmoid/logistic function simpler than softmax                                           
 
 model.summary()

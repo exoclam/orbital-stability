@@ -29,7 +29,7 @@ def a_to_P(a,G,mA,mB):
 def P_to_a(P,G,mA,mB):
     return ((P**2)*G*(mA+mB)/(4*(np.pi)**2))**(1./3)
 
-# calculate escape velocity, need to include v_i
+# calculate escape velocity
 def escape_velocity(G,mA,mB,r):
     return np.sqrt(2*G*(mA+mB)/r)
 
@@ -58,7 +58,7 @@ abin = 1. # in AU
 #Omega = 0 # fixed longitude of ascending node
 
 # instead of a grid, just draw uniformly from 100 e's, 100 mu's, and resulting range of 1000 ac's, +/- 10%
-draws = 1000
+draws = 4
 mu = 0.1
 elist = np.random.uniform(0.,0.99,draws)
 aclist = []
@@ -71,7 +71,7 @@ features = np.vstack((elist,aclist)).T # ten of each (e,mu), paired with 10 ac's
 
 output = []
 ### run predictions using these two features
-number_of_angles = 10
+number_of_angles = 2
 for point in features:
     fraction_stable = 0
     for angle in range(number_of_angles):
@@ -148,8 +148,16 @@ output = np.asarray(output)
 
 # attach to big table
 table = np.vstack((elist,aclist,output)).T 
-for row in table:
-    print (' '.join(map(str, row)))
+
+# from when I ran this on HPC
+#for row in table:
+#    print (' '.join(map(str, row)))
+
+# for when running as a pleb on single machine
+np.savetxt("big_mu_10.txt",table,delimiter=" ")
+
+# for after training model
+# np.savetxt("test_mu_10.txt",table,delimiter=" ")
 
 end = time.clock()
 elapsed = end-start
