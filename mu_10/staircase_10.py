@@ -57,8 +57,7 @@ abin = 1. # in AU
 #omega = 0 # fixed argument of periapsis
 #Omega = 0 # fixed longitude of ascending node
 
-# instead of a grid, just draw uniformly from 100 e's, 100 mu's, and resulting range of 1000 ac's, +/- 10%
-draws = 4
+draws = 100000
 mu = 0.1
 elist = np.random.uniform(0.,0.99,draws)
 aclist = []
@@ -71,7 +70,7 @@ features = np.vstack((elist,aclist)).T # ten of each (e,mu), paired with 10 ac's
 
 output = []
 ### run predictions using these two features
-number_of_angles = 2
+number_of_angles = 10
 for point in features:
     fraction_stable = 0
     for angle in range(number_of_angles):
@@ -157,7 +156,7 @@ table = np.vstack((elist,aclist,output)).T
 np.savetxt("big_mu_10.txt",table,delimiter=" ")
 
 # for after training model
-# np.savetxt("test_mu_10.txt",table,delimiter=" ")
+#np.savetxt("test_mu_10.txt",table,delimiter=" ")
 
 end = time.clock()
 elapsed = end-start

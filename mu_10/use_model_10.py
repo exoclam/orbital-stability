@@ -12,14 +12,16 @@ from sklearn import metrics
 from sklearn.metrics import roc_curve, auc, precision_recall_curve
 import time
 
-#import matplotlib as mpl
-#mpl.use("pgf")
-#pgf_with_rc_fonts = {
-#    "font.family": "serif",
-#    "font.serif": [],                   # use latex default serif font
-#    "font.sans-serif": ["DejaVu Sans"], # use a specific sans-serif font
-#}
-#mpl.rcParams.update(pgf_with_rc_fonts)
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+ 
+mpl.use("pgf")
+pgf_with_rc_fonts = {
+    "font.family": "serif",
+    "font.serif": [],                   # use latex default serif font
+    "font.sans-serif": ["DejaVu Sans"], # use a specific sans-serif font
+}
+mpl.rcParams.update(pgf_with_rc_fonts)
 
 mA = 1
 G = 39.4769264214
@@ -46,7 +48,7 @@ validation_set['param a'] = validation_set['ap/abin']/acrit(validation_set['ebin
 period_ratios = period_ratio(validation_set['ap/abin'],abin)
 validation_set['period ratio'] = np.asarray(0.5*(period_ratios-np.floor(period_ratios)))
 
-model = load_model('6layer_512neuron.h5')
+model = load_model('dropout_6layer_24neuron.h5')
 
 x_validation = np.asarray(validation_set[['mubin','param a','ebin','period ratio']])
 y_validation = np.asarray(validation_set['binary out'])
@@ -55,28 +57,30 @@ start = time.clock()
 predictions = []
 flags = []
 for row in x_validation:
+    # only run model on edge cases
     if row[1] >= 0.2:
         predictions.append(1)
-        flags.append(1)
+        flags.append(1)  # stable by prior
     elif row[1] <= -0.2:
         predictions.append(0)
-        flags.append(0)
+        flags.append(0)  # unstable by prior
     else:
         pred = model.predict(np.atleast_2d(row))[0][0]
         predictions.append(pred)
         if np.round(pred) == 0:
-            flags.append(2)
+            flags.append(2)  # unstable by model
         elif np.round(pred) == 1:
-            flags.append(3)
+            flags.append(3)  # stable by model
 
 end = time.clock()
 elapsed = end-start
 print ("elapsed: ", elapsed)
 
 predictions = np.asarray(zip(predictions,np.round(predictions),flags))
-np.savetxt(r'x_val_6layer_512neuron.txt', x_validation, fmt='%f')
-np.savetxt(r'pred_6layer_512neuron.txt', predictions, fmt='%f')
-#np.savetxt(r'/Users/coolworlds/Desktop/Orbital Stability/y_val_100epoch_10mu.txt', y_validation, fmt='%f')
+np.savetxt(r'x_val_6layer_24neuron.txt', x_validation, fmt='%f')
+np.savetxt(r'pred_6layer_24neuron.txt', predictions, fmt='%f')
+
+quit()
 
 n_classes = 2
 fpr = dict()
@@ -88,7 +92,7 @@ precision_mlp, recall_mlp, thresholds_mlp = precision_recall_curve(y_validation,
 print ("recall mlp: ", recall_mlp)
 print("precision mlp: ", precision_mlp)
  
-#plt.plot(recall_mlp,precision_mlp,lw=lw,color='k',label='MLP (area = %0.3f)' % auc(recall_mlp,precision_mlp))
+plt.plot(recall_mlp,precision_mlp,lw=lw,color='k',label='MLP (area = %0.3f)' % auc(recall_mlp,precision_mlp))
 
 # Holman line precision-recall curve                                                                                                           
 holman_predictions = np.where((validation_set['ap/abin'] < 0),0,1)
@@ -96,10 +100,10 @@ precision_hw99, recall_hw99, thresholds_hw99 = precision_recall_curve(y_validati
 print ("recall hw99: ", recall_hw99)
 print("precision hw99: ", precision_hw99)
 
-#plt.plot(recall_holman,precision_holman,lw=lw,color='k',ls='dashed',label='Holman-Wiegert (1999) (area = %0.3f)' % auc(recall_holman,precision_holman))
+plt.plot(recall_holman,precision_holman,lw=lw,color='k',ls='dashed',label='Holman-Wiegert (1999) (area = %0.3f)' % auc(recall_holman,precision_holman))
 #plot_model(model, to_file='model_100.pdf')                                                                                                    
 
-#plt.legend(loc="lower left",fontsize=16)
+plt.legend(loc="lower left",fontsize=16)
 #plt.savefig('precision-recall-on-k16b.pdf')
 
 quit()
