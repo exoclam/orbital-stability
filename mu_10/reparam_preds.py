@@ -42,8 +42,8 @@ def point_four():
 def point_two():
     return 0.2
 
-ax2.fill_between(ebins, point_four(), point_two(), where=point_four()>=point_two(), interpolate=True, color='black')
-ax2.scatter(data2_stable['ebin'],data2_stable['param a'],c='k',s=5,label='_nolegend_')
+ax2.fill_between(ebins, point_four(), point_two(), where=point_four()>=point_two(), interpolate=True, color='black') # plot all stables predicted by heuristic and not DNN, basically to save time if you're plotting lots and lots of points
+ax2.scatter(data2_stable['ebin'],data2_stable['param a'],c='k',s=5,label='_nolegend_') # plot all stables predicted by DNN and not heuristic
 ax2.text(0.05, -0.25, "$DNN   for   \mu = 0.1$",fontsize=18)
 
 false_positives_x = master_10[(master_10['mlp binary out'] == 1) & (reparam_mu_10['binary out'] == 0)]['ebin']
@@ -51,8 +51,8 @@ false_negatives_x = master_10[(master_10['mlp binary out'] == 0) & (reparam_mu_1
 false_positives_y = master_10[(master_10['mlp binary out'] == 1) & (reparam_mu_10['binary out'] == 0)]['param a']
 false_negatives_y = master_10[(master_10['mlp binary out'] == 0) & (reparam_mu_10['binary out'] == 1)]['param a']
 
-ax2.scatter(false_positives_x,false_positives_y,c='r',s=5,alpha=0.2,label='$FPs$')
-ax2.scatter(false_negatives_x,false_negatives_y,c='darkorchid',s=5,alpha=0.2,label='$FNs$')
+ax2.scatter(false_positives_x,false_positives_y,c='r',s=5,alpha=0.2,label='$FPs$') # if FP, color the black stable prediction red
+ax2.scatter(false_negatives_x,false_negatives_y,c='darkorchid',s=5,alpha=0.2,label='$FNs$') # if FN, color the white unstable prediction dark orchid
 ax2.set_xlabel('$e_{bin}$',fontsize=22)
 ax2.set_ylabel('$(a_{p}/a_{bin})/a_{HW99} - 1$',fontsize=22)
 ax2.set_xlim([0,0.99])
