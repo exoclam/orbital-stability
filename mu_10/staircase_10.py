@@ -153,7 +153,7 @@ table = np.vstack((elist,aclist,output)).T
 #    print (' '.join(map(str, row)))
 
 # for when running as a pleb on single machine
-np.savetxt("big_mu_10.txt",table,delimiter=" ")
+np.savetxt("train_mu_10.txt",table,delimiter=" ")
 
 # for after training model
 #np.savetxt("test_mu_10.txt",table,delimiter=" ")

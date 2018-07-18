@@ -15,13 +15,13 @@ import time
 import matplotlib as mpl
 import matplotlib.pyplot as plt
  
-mpl.use("pgf")
-pgf_with_rc_fonts = {
-    "font.family": "serif",
-    "font.serif": [],                   # use latex default serif font
-    "font.sans-serif": ["DejaVu Sans"], # use a specific sans-serif font
-}
-mpl.rcParams.update(pgf_with_rc_fonts)
+#mpl.use("pgf")
+#pgf_with_rc_fonts = {
+#    "font.family": "serif",
+#    "font.serif": [],                   # use latex default serif font
+#    "font.sans-serif": ["DejaVu Sans"], # use a specific sans-serif font
+#}
+#mpl.rcParams.update(pgf_with_rc_fonts)
 
 mA = 1
 G = 39.4769264214
@@ -34,9 +34,6 @@ def acrit(ebin,mu_bin):
 def massB(mu,mA):
     return mu*mA/(1-mu)
 
-#def period_ratio(mA,mB,ab,abin):
-#    return np.sqrt((4 * (ab/abin)**3 * np.pi**2)/(G*(mA+mB)))
-
 def period_ratio(ab,abin):
     return np.sqrt((ab/abin)**3)
 
@@ -45,12 +42,12 @@ validation_set = pd.DataFrame(validation_set,columns=['ebin','ap/abin','out'])
 validation_set['binary out'] = np.floor(validation_set['out']) # if less than 1, set to 0
 validation_set['mubin'] = 0.1
 validation_set['param a'] = validation_set['ap/abin']/acrit(validation_set['ebin'],validation_set['mubin']) - 1
-period_ratios = period_ratio(validation_set['ap/abin'],abin)
-validation_set['period ratio'] = np.asarray(0.5*(period_ratios-np.floor(period_ratios)))
+validation_set['zeta'] = period_ratio(validation_set['ap/abin'],abin)
+validation_set['epsilon'] = np.asarray(0.5*(validation_set['zeta']-np.floor(validation_set['zeta'])))
 
 model = load_model('dropout_6layer_24neuron.h5')
 
-x_validation = np.asarray(validation_set[['mubin','param a','ebin','period ratio']])
+x_validation = np.asarray(validation_set[['mubin','param a','ebin','epsilon']])
 y_validation = np.asarray(validation_set['binary out'])
 
 start = time.clock()
@@ -77,8 +74,8 @@ elapsed = end-start
 print ("elapsed: ", elapsed)
 
 predictions = np.asarray(zip(predictions,np.round(predictions),flags))
-np.savetxt(r'x_val_6layer_24neuron.txt', x_validation, fmt='%f')
-np.savetxt(r'pred_6layer_24neuron.txt', predictions, fmt='%f')
+np.savetxt(r'slice_x_val_6layer_24neuron.txt', x_validation, fmt='%f')
+np.savetxt(r'slice_pred_6layer_24neuron.txt', predictions, fmt='%f')
 
 quit()
 

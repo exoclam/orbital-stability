@@ -35,7 +35,7 @@ abin = 1
 mu = 0.1
 
 columns = ['ebin', 'ap', 'out']
-big_job = np.vstack([np.array(map(float, line.split())) for line in open('big_mu_10.txt')])
+big_job = np.vstack([np.array(map(float, line.split())) for line in open('train_mu_10.txt')])
 big_batch = pd.DataFrame(big_job,columns=columns)
 big_batch['mubin'] = mu
 big_batch['(ap/abin)/ahw99 - 1'] = big_batch['ap']/acrit(big_batch['ebin'],big_batch['mubin']) - 1.  

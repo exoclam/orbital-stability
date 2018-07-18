@@ -13,13 +13,12 @@ def acrit(ebin,mu_bin):
     ac = 1.60+5.10*ebin+(-2.22)*ebin**2+4.12*mu_bin+(-4.27)*ebin*mu_bin+(-5.09)*mu_bin**2 + 4.61*(ebin**2)*(mu_bin**2)
     return ac
 
-# re-parameterization of validation sets
-reparam_mu_10 = np.vstack([np.array(map(float, line.split())) for line in open('big_mu_10.txt')])
+# re-parameterization of test set
+reparam_mu_10 = np.vstack([np.array(map(float, line.split())) for line in open('test_mu_10.txt')])
 reparam_mu_10 = pd.DataFrame(reparam_mu_10,columns=['ebin','a','out'])
 reparam_mu_10['binary out'] = np.floor(reparam_mu_10['out'])
 mu = 0.1
 reparam_mu_10['param a'] = reparam_mu_10['a']/acrit(reparam_mu_10['ebin'],mu) - 1
-#np.savetxt(r'/Users/coolworlds/Desktop/Orbital Stability/reparam_mu_10.txt', reparam_mu_10, fmt='%f')
 
 # get ground truth of edge cases only because we're mainly interested in running the model on islands
 data1 = reparam_mu_10[(reparam_mu_10['param a'] <= 0.2) & (reparam_mu_10['param a'] >= -0.2)]
@@ -29,7 +28,7 @@ f, ax1 = plt.subplots(1, 1)
 ax1.set_facecolor('grey')
 ebins = np.linspace(0,0.99,1000)
 
-# fill in parameter space for which we probably don't need a DNN to know stability
+# fill in parameter space for which we don't need a DNN to know stability
 ax1.fill_between(ebins, acrit(ebins,mu)*1.333, acrit(ebins,mu)*0.667, where= acrit(ebins,mu)*0.667 <= acrit(ebins,mu)*1.333, facecolor='white', interpolate=True) # white fill for instability, save the time-intensive scatter plotting for DNN
 ax1.fill_between(ebins, acrit(ebins,mu)*1.333, acrit(ebins,mu)*1.19, where= acrit(ebins,mu)*1.19 <= acrit(ebins,mu)*1.333, facecolor='black', interpolate=True) # ditto for stable fill
 
