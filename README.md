@@ -47,15 +47,13 @@ We experimented with lots of different setups, and since we settled for the firs
 
 
 ## Predicting with our trained DNN
-Now we can make predictions and plot our results.
+Now we can make predictions and plot our results. But in order to do so we first need some test data. So we change the output file name to something like test_mu_10.txt and re-run staircase_10.py. You can change the number of draws for a bigger or smaller test set.
 
-For our paper we used LaTeX fonts, but in order to keep the code minimalist, most of the formatting has been removed or commented out. The left panel of Figure 3 in our paper simply shows the unparameterized simulated data from REBOUND.
+For our paper we used LaTeX fonts, but we're not here to write a paper, so most of the formatting has been removed or commented out. The left panel of Figure 3 in our paper simply shows the unparameterized simulated data from REBOUND.
 
 ```
 python unparam_simulated.py
 ```
-
-In order to generate predictions we need some test data. So change we change the output file name to something like test_mu_10.txt and re-run staircase_10.py. You can change the number of draws for a bigger or smaller test set.
 
 Now let's actually make our predictions using our trained DNN and plot the results in reparameterized space. 
 
@@ -63,9 +61,17 @@ Now let's actually make our predictions using our trained DNN and plot the resul
 python use_model_10.py
 ```
 
-
+All we do here is take test_mu_10.txt as input and, to save resources, run it through some checks rather than run it all through the trained DNN. Only if the sample is seeded within +/- 20% of the Holman-Wiegert critical threshold do we feed it into the model. Note the flags differentiating model- and heuristic-predicted outputs; we eventually elected not to use them but these can be useful when plotting results.  
 
 ```
 python reparam_preds.py
 ```
+
+Here we plot the right panel of Figure 4, visualizing the islands of instability, false positives, and false negatives. We can get a better read on our model's performaance by comparing its accuracy, precision, and recall with that of the Holman-Wiegert model for an increasingly narrower band around the critical threshold. Far from this boundary, both models work reasonably well, but as we get towards the resonances and islands, the DNN begins to do much better. We create the plots in Figure 5 with the following code.
+
+```
+python figure5.py
+```
+
+
 
