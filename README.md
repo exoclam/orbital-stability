@@ -4,11 +4,10 @@ This is a tutorial for using a deep neural network (DNN) to predict the orbital 
 
 To run predictions on the stability of a circumbinary system given binary eccentricity, binary mass ratio (µ), and binary and planet semi-major axes, simply run 'python tatooine.py -a ____ -e ____ -m ____', where the quantity following the -a flag is the ratio of the planet's semi-major axis to the binary semi-major axis; the quantity following -e is the binary eccentricity; and the quantity following -m is the mass ratio. For fully detailed information, please see our paper, "A Machine Learns to Predict the Stability of Circumbinary Planets", out now on MNRAS and [arXiv](https://arxiv.org/abs/1801.03955).
 
-In the near future, we'll also provide the scripts and a tutorial for training your own DNN.
 
-# Tutorial (working, slowly)
+# Tutorial (or: how to write our paper from scratch)
 
-Please note some embarrassing or nonsensical comments may have survived in the provided code. Please also note this code was written in Python 2 and before I knew of the existence of PEP-8.
+Please note some embarrassing or nonsensical comments may have survived in the provided code. Please also note this code was written in Python 2 and before I knew of the existence of PEP-8. 
 
 ## Generating training data
 With observational data from only a handful of circumbinary planets, we elected to generate the training data using the numerical integrator REBOUND. We begin by dropping the µ dimension, holding it constant at 0.1 while still varying semi-major axis, eccentricity, and initial phase. We build the training set with the following script in the /mu_10/ directory.  
@@ -72,6 +71,14 @@ Here we plot the right panel of Figure 4, visualizing the islands of instability
 ```
 python figure5.py
 ```
+
+## Graduating from slices
+Great! Now that we've gone through the whole process for a slice of the data, let's step back outside the mu_10 folder and look at the wider breadth of mass ratios, (0, 0.5]. Some key differences this time around: we train our DNN on a million data points (so ten million simulations, since each output requires ten simulations)...feel free to start with a more tractably sized training set; since we're adding another dimension, we can't plot in parameter space the same way we did before, and we change the code as seen below.
+
+```
+staircase.py
+```
+
 
 
 
