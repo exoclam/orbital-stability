@@ -76,31 +76,5 @@ print ("elapsed: ", elapsed)
 predictions = np.asarray(zip(predictions,np.round(predictions),flags))
 np.savetxt(r'slice_x_val_6layer_24neuron.txt', x_validation, fmt='%f')
 np.savetxt(r'slice_pred_6layer_24neuron.txt', predictions, fmt='%f')
+np.savetxt(r'slice_y_val_6layer_24neuron.txt', y_validation, fmt='%f')
 
-quit()
-
-n_classes = 2
-fpr = dict()
-tpr = dict()
-roc_auc = dict()
-lw = 2
-precision_mlp, recall_mlp, thresholds_mlp = precision_recall_curve(y_validation,predictions[:,0])
-# MLP precision-recall curve                                                                                                                
-print ("recall mlp: ", recall_mlp)
-print("precision mlp: ", precision_mlp)
- 
-plt.plot(recall_mlp,precision_mlp,lw=lw,color='k',label='MLP (area = %0.3f)' % auc(recall_mlp,precision_mlp))
-
-# Holman line precision-recall curve                                                                                                           
-holman_predictions = np.where((validation_set['ap/abin'] < 0),0,1)
-precision_hw99, recall_hw99, thresholds_hw99 = precision_recall_curve(y_validation,holman_predictions)
-print ("recall hw99: ", recall_hw99)
-print("precision hw99: ", precision_hw99)
-
-plt.plot(recall_holman,precision_holman,lw=lw,color='k',ls='dashed',label='Holman-Wiegert (1999) (area = %0.3f)' % auc(recall_holman,precision_holman))
-#plot_model(model, to_file='model_100.pdf')                                                                                                    
-
-plt.legend(loc="lower left",fontsize=16)
-#plt.savefig('precision-recall-on-k16b.pdf')
-
-quit()

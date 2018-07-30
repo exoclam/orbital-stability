@@ -1,6 +1,6 @@
 # A Machine Learns to Predict the Stability of Circumbinary Planets
 
-This is a tutorial for using a deep neural network (DNN) to predict the orbital stability of circumbinary planets. The DNN was trained on one million simulations run on [REBOUND](http://rebound.readthedocs.io/en/latest/index.html), a numerical integrator by Hanno Rein et al. You can use our code to generate stability predictions for the circumbinary planetary system of your choice. As a proof of concept, this model is simplified - one can imagine introducing additional parameters, such as orbit inclination. 
+This is a tutorial for using a deep neural network (DNN) to predict the orbital stability of circumbinary planets, as well as for training and validating your own DNN. Our DNN was trained on one million simulations run on [REBOUND](http://rebound.readthedocs.io/en/latest/index.html), a numerical integrator by Hanno Rein et al. You can use our code to generate stability predictions for the circumbinary planetary system of your choice. As a proof of concept, this model is simplified - one can imagine introducing additional parameters, such as orbit inclination. 
 
 To run predictions on the stability of a circumbinary system given binary eccentricity, binary mass ratio (µ), and binary and planet semi-major axes, simply run 'python tatooine.py -a ____ -e ____ -m ____', where the quantity following the -a flag is the ratio of the planet's semi-major axis to the binary semi-major axis; the quantity following -e is the binary eccentricity; and the quantity following -m is the mass ratio. For fully detailed information, please see our paper, "A Machine Learns to Predict the Stability of Circumbinary Planets", out now on MNRAS and [arXiv](https://arxiv.org/abs/1801.03955).
 
@@ -13,7 +13,7 @@ Please note some embarrassing or nonsensical comments may have survived in the p
 With observational data from only a handful of circumbinary planets, we elected to generate the training data using the numerical integrator REBOUND. We begin by dropping the µ dimension, holding it constant at 0.1 while still varying semi-major axis, eccentricity, and initial phase. We build the training set with the following script in the /mu_10/ directory.  
 
 ```
-python staircase_10.py
+python sim_10.py
 ```
 
 In this script, we first set the hyperparameters of our simulation: here we use 10 phases per draw from [e, a] space and 1000 draws, where e is drawn (naively) uniformly from [0, 0.99] and a is drawn uniformly from a +/- 33% envelope surrounding the output of the function a<sub>crit</sub>(µ,e), described in Holman & Weigert (1999) as a sum of terms of products of µ and e up to the second power. Of course, for now µ is 0.1. For each of these 100000 initial seedings, we use REBOUND's IAS15 integrator to simulate 100000 binary periods. At each timestep during the simulation, REBOUND provides x, y, z, v<sub>x</sub>, v<sub>y</sub>, and v<sub>z</sub>. 
@@ -40,13 +40,13 @@ There is more than one way to do this, but here we simply take ε = 0.5 * (ζ - 
 
 We use sklearn to split the training data 0.75/0.25 between training/validation. We use the Keras library to build our deep neural network. Okay, so this is probably why you're here.
 
-Keras helps you abstract away the code and think of DNNs as building blocks of customizable layers. We ended up choosing 6 layers each with 24 neurons and 20% dropout. The intermediary hidden layers use the rectified linear unit (ReLU) activation function, while the final output layer uses the sigmoid activation function. Our optimizer was rmsprop and our loss function was binary crossentropy. Our batch size was 120 and we trained the DNN for 100 epochs (one epoch is a back-and-forth pass through the network). 
+[Keras](http://keras.com???) helps you abstract away the code and think of DNNs as building blocks of customizable layers. We ended up choosing 6 layers each with 24 neurons and 20% dropout. The intermediary hidden layers use the rectified linear unit (ReLU) activation function, while the final output layer uses the sigmoid activation function. Our optimizer was rmsprop and our loss function was binary crossentropy. Our batch size was 120 and we trained the DNN for 100 epochs (one epoch is a back-and-forth pass through the network). 
 
 We experimented with lots of different setups, and since we settled for the first configuration that outperformed Holman-Wiegert for precision, recall, and accuracy, you could probably beat us! Definitely check out the keras documentation for more ways you can design your neural network. There are certainly tons of hyperparameters to play with.
 
 
 ## Predicting with our trained DNN
-Now we can make predictions and plot our results. But in order to do so we first need some test data. So we change the output file name to something like test_mu_10.txt and re-run staircase_10.py. You can change the number of draws for a bigger or smaller test set.
+Now we can make predictions and plot our results. But in order to do so we first need some test data. So we change the output file name to something like test_mu_10.txt and re-run sim_10.py. You can change the number of draws for a bigger or smaller test set.
 
 For our paper we used LaTeX fonts, but we're not here to write a paper, so most of the formatting has been removed or commented out. The left panel of Figure 3 in our paper simply shows the unparameterized simulated data from REBOUND.
 
@@ -66,19 +66,26 @@ All we do here is take test_mu_10.txt as input and, to save resources, run it th
 python reparam_preds.py
 ```
 
-Here we plot the right panel of Figure 4, visualizing the islands of instability, false positives, and false negatives. We can get a better read on our model's performaance by comparing its accuracy, precision, and recall with that of the Holman-Wiegert model for an increasingly narrower band around the critical threshold. Far from this boundary, both models work reasonably well, but as we get towards the resonances and islands, the DNN begins to do much better. We create the plots in Figure 5 with the following code.
+Here we plot the right panel of Figure 4, visualizing the islands of instability, false positives, and false negatives. We can get a better read on our model's performaance by comparing its accuracy, precision, and recall with that of the Holman-Wiegert model for an increasingly narrower band around the critical threshold. Far from this boundary, both models work reasonably well, but as we get towards the resonances and islands, the DNN begins to do much better. We create the accuracy, precision, and recall plots in Figure 5 with the following code. 
 
 ```
 python figure5.py
 ```
 
 ## Graduating from slices
-Great! Now that we've gone through the whole process for a slice of the data, let's step back outside the mu_10 folder and look at the wider breadth of mass ratios, (0, 0.5]. Some key differences this time around: we train our DNN on a million data points (so ten million simulations, since each output requires ten simulations)...feel free to start with a more tractably sized training set; since we're adding another dimension, we can't plot in parameter space the same way we did before, and we change the code as seen below.
+Great! Now that we've gone through the whole process for a slice of the data, let's step back outside the mu_10 folder and look at the wider breadth of mass ratios, (0, 0.5]. Some key differences this time around: we train our DNN on a million data points (so ten million simulations, since each output requires ten simulations)...feel free to start with a more tractably sized training set; also, since we're adding another dimension, we can't plot in parameter space the same way we did before.
 
 ```
-staircase.py
+python sim.py
 ```
 
+DO I DO BIG_JOB_NARROW OR JUST BIG_JOB??? Try with both??? In make_model.py, running 10 epochs with both big_job_narrow.txt and fattened up big_job.txt to see if there's an appreciable differene in resulting test set accuracy, precision, and recall. Should do the smae for 100 epochs too. Ultimately need to find out if using 20% envelopes will engender overfitting or seem disingenuous, esp when I didn't do so in the mu_10 version...OR DID I??? (check ssh version) But it seems like I trained on a 33% envelope in the mu_10 case.
 
+x GENERATE A BIG NARROW TEST SET AND A BIG FAT TEST SET!!! (or split the existing sets)
+  Then: run use_model.py on fat_train and narrow_train
+
+use_model_copy.py
+
+use_model2.py uses original .h5 file and predicts on big_narrow data, producing pred_narrow2.txt and friends
 
 

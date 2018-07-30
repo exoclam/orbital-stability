@@ -40,7 +40,7 @@ def calculate_recall(tp,fn):
     except:
         pass
 
-# validation set
+# validation set, or like use the x_vals you'd saved off from when you generated predictions in use_model_10.py
 reparam_mu_10 = np.vstack([np.array(map(float, line.split())) for line in open('test_mu_10.txt')])
 reparam_mu_10 = pd.DataFrame(reparam_mu_10,columns=['ebin','a','out'])
 reparam_mu_10['binary out'] = np.floor(reparam_mu_10['out'])
