@@ -87,7 +87,7 @@ In their basic configuration, Holman and Wiegert already figured out how to make
 python sim.py
 ```
 
-As you can see, the design and training of the DNN didn't change much, besides adding a µ column and doubling the number of neurons in each layer to 48. We toyed with many different architectures but decided to deviate from the mu_10 case as little as possible. 
+As you can see, the design and training of the DNN didn't change much, besides adding a µ column and doubling the number of neurons in each layer to 48. We toyed with many different architectures but decided to deviate from the mu_10 case as little as possible. You could (and we did) spend weeks testing countless variations of layer count, neuron count, dropout percentage, optimizer used, activation function. You could also realize knobs are made not to be fiddled with but to be ignored, and live a much happier life.
 
 ```
 python make_model.py
@@ -109,6 +109,8 @@ Hopefully you'll see something similar to Figure 5 from our paper, or even bette
 
 
 ## Wishlist
+- doing this all in a Jupyter notebook you can more easily follow
+- doing this less verbosely
 - introducing z coordinate (fifth and sixth degrees of freedom)
 - abin != 1.0
 - non-circular initial orbits
