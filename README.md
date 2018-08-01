@@ -1,6 +1,6 @@
 # A Machine Learns to Predict the Stability of Circumbinary Planets
 
-This is a tutorial for using a deep neural network (DNN) to predict the orbital stability of circumbinary planets, as well as for training and validating your own DNN. Our DNN was trained on one million simulations run on [REBOUND](http://rebound.readthedocs.io/en/latest/index.html), a numerical integrator by Hanno Rein et al. You can use our code to generate stability predictions for the circumbinary planetary system of your choice. As a proof of concept, this model is simplified - one can imagine introducing additional parameters, such as orbit inclination. 
+This is a tutorial for using a deep neural network (DNN) to predict the orbital stability of circumbinary planets, as well as for training and validating your own DNN. Our DNN was trained on one million (well, not really one million; see "Graduating from slices") simulations run on [REBOUND](http://rebound.readthedocs.io/en/latest/index.html), a numerical integrator by Hanno Rein et al. You can use our code to generate stability predictions for the circumbinary planetary system of your choice. As a proof of concept, this model is simplified - one can imagine introducing additional parameters, such as orbit inclination. 
 
 To run predictions on the stability of a circumbinary system given binary eccentricity, binary mass ratio (µ), and binary and planet semi-major axes, simply run
 
@@ -79,15 +79,39 @@ python figure5.py
 ```
 
 ## Graduating from slices
-Great! Now that we've gone through the whole process for a slice of the data, let's step back outside the mu_10 folder and look at the wider breadth of mass ratios, (0, 0.5]. Some key differences this time around: we train our DNN on a million data points (so ten million simulations, since each output requires ten simulations)...feel free to start with a more tractably sized training set; also, since we're adding another dimension, we can't plot in parameter space the same way we did before.
+Great! Now that we've gone through the whole process for a slice of the data, let's step back outside the mu_10 folder and look at the wider breadth of mass ratios, (0, 0.5]. Some key differences this time: we train our DNN on a million data points (as we mentioned above, not really, but we'll get to that shortly); also, since we're adding another dimension, we can't plot in parameter space like we did before. In the repo are the original training set (big_job_narrow.txt) and test set (more_samples.txt), but the code has you making a million samples, if you're into cooking from scratch and setting your laptop on fire. 
+
+In their basic configuration, Holman and Wiegert already figured out how to make good predictions for the stability of most circumbinary planets. The significant gains in our work come from our ability to generate better predictions about the edge cases - regions very close to Holman and Wiegert's analytic stability threshold, where mean motion resonances cause planets predicted by the analytic threshold as stable to be actually unstable, and vice versa. While in the mu_10 case we trained and tested on a +/- 33% envelope, in this more general case we train on a tighter envelope, +/- 20%, which was shown to encompass every Holman-Wiegert-predicted error given an independently generated 1e5-point test set. This way we could best exploit the DNN by training it only on what it needed to see. 
 
 ```
 python sim.py
 ```
 
+As you can see, the design and training of the DNN didn't change much, besides adding a µ column and doubling the number of neurons in each layer to 48. We toyed with many different architectures but decided to deviate from the mu_10 case as little as possible. 
+
+```
+python make_model.py
+```
+
+Similarly for generating predictions on the test set, there isn't much difference outside the additional varying dimension. 
+
+```
+python use_model.py
+```
+
+Finally, we plot precision, recall, and accuracy against varying envelope sizes.
+
+```
+python figure5.py
+```
+
+Hopefully you'll see something similar to Figure 5 from our paper, or even better!
+
+
 ## Wishlist
-- allowing a third dimension
+- introducing z coordinate (fifth and sixth degrees of freedom)
 - abin != 1.0
 - non-circular initial orbits
 - more realistic sampling of eccentricities and mass ratios
+- grad school
 
