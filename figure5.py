@@ -41,13 +41,13 @@ def calculate_recall(tp,fn):
         pass
 
 # read in features and y_vals
-features = np.vstack([np.array(map(float, line.split())) for line in open('x_val_6_24.txt')])
+features = np.vstack([np.array(map(float, line.split())) for line in open('x_val_6_48.txt')])
 features = pd.DataFrame(features,columns=['ebin','mubin','param a','epsilon'])
-y_val = np.vstack([np.array(map(float, line.split())) for line in open('y_val_6_24.txt')])
+y_val = np.vstack([np.array(map(float, line.split())) for line in open('y_val_6_48.txt')])
 y_val = pd.DataFrame(y_val,columns=['binary out'])
 
 # MLP predictions
-predictions = np.vstack([np.array(map(float, line.split())) for line in open('pred_6_24.txt')])
+predictions = np.vstack([np.array(map(float, line.split())) for line in open('pred_6_48.txt')])
 predictions = pd.DataFrame(predictions,columns=['raw pred mlp','pred mlp','flag'])
 # HW99 predictions
 predictions['pred hw99'] = np.where((features['param a'] < 0),0,1)
@@ -134,5 +134,5 @@ ax3.set_ylabel(r'recall',fontsize=15)
 ax3.set_xlabel(r'envelope size',fontsize=15)
 ax3.legend(loc='lower right',fontsize=16)
 
-plt.savefig('figure5_6_24.pdf')
+plt.savefig('figure5_6_48.pdf')
 plt.show()

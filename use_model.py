@@ -73,7 +73,7 @@ elapsed = end-start
 print ("elapsed: ", elapsed)
 
 predictions = np.asarray(zip(predictions,np.round(predictions),flags))
-np.savetxt(r'x_val_6_24.txt', x_validation, fmt='%f')
-np.savetxt(r'pred_6_24.txt', predictions, fmt='%f')
-np.savetxt(r'y_val_6_24.txt', y_validation, fmt='%f')
+np.savetxt(r'x_val_6_48.txt', x_validation, fmt='%f')
+np.savetxt(r'pred_6_48.txt', predictions, fmt='%f')
+np.savetxt(r'y_val_6_48.txt', y_validation, fmt='%f')
 
