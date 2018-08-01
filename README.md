@@ -88,4 +88,8 @@ use_model_copy.py
 
 use_model2.py uses original .h5 file and predicts on big_narrow data, producing pred_narrow2.txt and friends
 
+...
+
+maybe use more_samples.txt as a smaller test set?
+and try applying figure5.py to pred files from ssh?
 
